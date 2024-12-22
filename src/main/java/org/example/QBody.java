@@ -1,41 +1,10 @@
+package org.example;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
-// Класс для хранения информации об объекте
-class CelestialBody {
-    String name;
-    double mass;
-    double distance;
-    double majorSemiAxis;
-    double eccentricity;
-    double orbitalInclination;
-    double radius;
-    double gravityConst;
-    double orbitalSpeed;
-    double periodOfRevolution;
-    double rotationPeriod;
-    String classification;
-
-    public CelestialBody(String name, double mass, double distance, double majorSemiAxis,
-                         double eccentricity, double orbitalInclination, double radius,
-                         double gravityConst, double orbitalSpeed, double periodOfRevolution,
-                         double rotationPeriod, String classification) {
-        this.name = name;
-        this.mass = mass;
-        this.distance = distance;
-        this.majorSemiAxis = majorSemiAxis;
-        this.eccentricity = eccentricity;
-        this.orbitalInclination = orbitalInclination;
-        this.radius = radius;
-        this.gravityConst = gravityConst;
-        this.orbitalSpeed = orbitalSpeed;
-        this.periodOfRevolution = periodOfRevolution;
-        this.rotationPeriod = rotationPeriod;
-        this.classification = classification;
-    }
-}
-
+// Основной класс для запуска симуляции
 public class QBody {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -45,9 +14,9 @@ public class QBody {
         int n = input.nextInt();
 
         // Минимальные массы для классификации
-        double planetMin = 3.3e23;
-        double starMin = 1.6e29;
-        double BHMin = 6.0e30;
+        double planetMin = 3.3e23;   // Масса Меркурия
+        double starMin = 1.6e29;     // Примерно 0.08 солнечных масс
+        double BHMin = 6.0e30;       // Примерно 3 солнечные массы
 
         // Список для хранения объектов
         ArrayList<CelestialBody> bodies = new ArrayList<>();
@@ -63,7 +32,7 @@ public class QBody {
             System.out.print("Масса (кг): ");
             double mass = input.nextDouble();
 
-            System.out.print("Расстояние (метров): ");
+            System.out.print("Расстояние от центра симуляции (метров): ");
             double distance = input.nextDouble();
 
             System.out.print("Большая полуось (метров): ");
@@ -78,8 +47,7 @@ public class QBody {
             System.out.print("Радиус (метров): ");
             double radius = input.nextDouble();
 
-            System.out.print("Гравитационная постоянная (м/с²): ");
-            double gravityConst = input.nextDouble();
+            // Удалён ввод gravityConst
 
             System.out.print("Орбитальная скорость (м/с): ");
             double orbitalSpeed = input.nextDouble();
@@ -103,29 +71,56 @@ public class QBody {
             }
 
             // Создание и добавление объекта в список
-            CelestialBody body = new CelestialBody(name, mass, distance, majorSemiAxis,
-                    eccentricity, orbitalInclination, radius, gravityConst,
-                    orbitalSpeed, periodOfRevolution, rotationPeriod, classification);
+            // Передача дополнительных параметров в конструктор
+            CelestialBody body = new CelestialBody(
+                    name,
+                    mass,
+                    radius,
+                    distance, // posX
+                    0,        // posY
+                    0,        // velX
+                    orbitalSpeed, // velY
+                    classification,
+                    majorSemiAxis,
+                    eccentricity,
+                    orbitalInclination,
+                    periodOfRevolution,
+                    rotationPeriod
+            );
             bodies.add(body);
         }
 
+        // Запрос на ускорение симуляции
+        System.out.print("\nВведите фактор ускорения симуляции (например, 1 для нормальной скорости): ");
+        double accelerationFactor = input.nextDouble();
+
         // Вывод информации о всех объектах
         System.out.println("\n=== Информация о всех объектах ===");
+        int index = 1;
         for (CelestialBody body : bodies) {
-            System.out.println("\n--- " + body.name + " ---");
-            System.out.println("Классификация: " + body.classification + " (" + body.mass + " кг)");
-            System.out.println("Масса: " + body.mass + " кг");
-            System.out.println("Расстояние: " + body.distance + " метров");
-            System.out.println("Большая полуось: " + body.majorSemiAxis + " метров");
-            System.out.println("Эксцентриситет: " + body.eccentricity);
-            System.out.println("Орбитальное наклонение: " + body.orbitalInclination + " градусов");
-            System.out.println("Радиус: " + body.radius + " метров");
-            System.out.println("Гравитационная постоянная: " + body.gravityConst + " м/с²");
-            System.out.println("Орбитальная скорость: " + body.orbitalSpeed + " м/с");
-            System.out.println("Период обращения: " + body.periodOfRevolution + " секунд");
-            System.out.println("Период вращения: " + body.rotationPeriod + " секунд");
+            System.out.println("\n--- " + index + ": " + body.getName() + " ---");
+            System.out.println("Классификация: " + body.getClassification() + " (" + body.getMass() + " кг)");
+            System.out.println("Масса: " + body.getMass() + " кг");
+            System.out.println("Позиция: (" + body.getPosX() + ", " + body.getPosY() + ") метров");
+            System.out.println("Скорость: (" + body.getVelX() + ", " + body.getVelY() + ") м/с");
+            System.out.println("Радиус: " + body.getRadius() + " метров");
+            System.out.println("Большая полуось: " + body.getMajorSemiAxis() + " метров");
+            System.out.println("Эксцентриситет: " + body.getEccentricity());
+            System.out.println("Орбитальное наклонение: " + body.getOrbitalInclination() + " градусов");
+            System.out.println("Период обращения: " + body.getPeriodOfRevolution() + " секунд");
+            System.out.println("Период вращения: " + body.getRotationPeriod() + " секунд");
+            index++;
         }
 
         input.close();
+
+        if (bodies.isEmpty()){
+            System.out.println("Нет объектов для расчётов");
+            return;
+        }
+
+        // Запуск симуляции
+        Simulation simulation = new Simulation(bodies, 1.0, accelerationFactor); // шаг 1 секунда
+        simulation.startSimulation();
     }
 }
